@@ -2,26 +2,50 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Video Cube in VR</title>
+    <title>VR Video Cube</title>
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   </head>
   <body>
-    <video id="video-texture" src="video.mp4" autoplay loop muted playsinline crossorigin="anonymous" style="display: none"></video>
+    <!-- Hidden video element -->
+    <video
+      id="video-texture"
+      src="video.mp4"
+      autoplay
+      loop
+      muted
+      playsinline
+      crossorigin="anonymous"
+      style="display: none"
+    ></video>
 
     <a-scene
       renderer="useLegacyLights: false; colorManagement: true; physicallyCorrectLights: true"
       vr-mode-ui="enabled: true"
-      embedded
     >
-      <a-box position="0 1.5 -3" rotation="0 45 0" width="1" height="1" depth="1"
+      <!-- Cube with video material -->
+      <a-box id="videoCube"
+             position="0 1.6 -3"
+             width="1"
+             height="1"
+             depth="1"
              material="shader: flat; src: #video-texture">
       </a-box>
 
-      <!-- Modern directional and ambient light -->
-      <a-light type="ambient" color="#ffffff" intensity="0.5"></a-light>
-      <a-light type="directional" color="#ffffff" intensity="1" position="1 2 1"></a-light>
-
-      <a-camera position="0 1.6 0" wasd-controls look-controls></a-camera>
+      <a-light type="ambient" color="#FFF" intensity="1.0"></a-light>
+      <a-camera position="0 1.6 0"></a-camera>
     </a-scene>
+
+    <script>
+      // Ensure video starts
+      const video = document.getElementById('video-texture');
+      video.addEventListener('canplay', () => {
+        video.play();
+      });
+
+      // Debug log if video fails to load
+      video.onerror = function (e) {
+        console.error("Video failed to load", e);
+      };
+    </script>
   </body>
 </html>
