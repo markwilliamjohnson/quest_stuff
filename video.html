@@ -2,22 +2,25 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Video on Cube</title>
+    <title>Video Cube in VR</title>
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   </head>
   <body>
-    <!-- Hidden video element in HTML -->
-    <video id="myVideo" src="video.mp4" autoplay loop crossorigin="anonymous" muted playsinline></video>
+    <!-- Hidden video element -->
+    <video id="video-texture" src="video.mp4" autoplay loop muted playsinline crossorigin="anonymous" style="display: none"></video>
 
-    <a-scene>
-      <!-- Video-textured cube -->
+    <a-scene vr-mode-ui="enabled: true" embedded>
+      <!-- Box with video texture -->
       <a-box position="0 1.5 -3" rotation="0 45 0" width="1" height="1" depth="1"
-             material="shader: flat; src: #myVideo">
+             material="shader: flat; src: #video-texture">
       </a-box>
 
-      <!-- Lighting and camera -->
-      <a-light type="ambient" color="#fff"></a-light>
-      <a-camera position="0 1.6 0"></a-camera>
+      <!-- Lighting -->
+      <a-light type="ambient" color="#FFFFFF" intensity="1.0"></a-light>
+      <a-light type="directional" color="#FFFFFF" intensity="0.5" position="1 2 1"></a-light>
+
+      <!-- Camera and controls -->
+      <a-camera position="0 1.6 0" wasd-controls look-controls></a-camera>
     </a-scene>
   </body>
 </html>
