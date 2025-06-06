@@ -2,43 +2,72 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>VR Video Cube with Modern Lighting</title>
+    <title>Spinning Video Cube with Audio in VR</title>
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   </head>
-  <body>
-    <!-- Hidden video element -->
+  <body style="margin: 0; overflow: hidden; background: #000;">
+    <!-- Video element (audio enabled, not autoplayed) -->
     <video
       id="video-texture"
       src="video.mp4"
-      autoplay
       loop
-      muted
       playsinline
       crossorigin="anonymous"
       style="display: none"
     ></video>
 
+    <!-- Button to start video with audio -->
+    <button id="startButton" style="
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+      padding: 10px 20px;
+      font-size: 16px;
+    ">Start Video</button>
+
     <a-scene
       renderer="useLegacyLights: false; physicallyCorrectLights: true; colorManagement: true"
       vr-mode-ui="enabled: true"
     >
-      <!-- Video cube (1m³) -->
-      <a-box position="0 1.6 -3" width="1" height="1" depth="1"
-             material="shader: flat; src: #video-texture">
+      <!-- Spinning video-textured cube -->
+      <a-box id="videoCube"
+             position="0 1.6 -3"
+             width="2" height="2" depth="1"
+             material="shader: flat; src: #video-texture"
+             rotation="0 0 0">
       </a-box>
 
-      <!-- Updated lights with correct intensity (intensity × π) -->
+      <!-- Lighting -->
       <a-light type="ambient" color="#FFFFFF" intensity="3.14"></a-light>
       <a-light type="directional" color="#FFFFFF" intensity="1.57" position="1 3 1"></a-light>
 
-      <!-- Camera -->
       <a-camera position="0 1.6 0" wasd-controls look-controls></a-camera>
     </a-scene>
 
     <script>
       const video = document.getElementById('video-texture');
-      video.addEventListener('canplay', () => video.play());
-      video.onerror = e => console.error("Video load error", e);
+      const startButton = document.getElementById('startButton');
+
+      // Start video on user interaction
+      startButton.addEventListener('click', () => {
+        video.play().then(() => {
+          startButton.style.display = 'none';
+        }).catch(err => {
+          console.error("Playback failed", err);
+        });
+      });
+
+      // Slowly rotate the cube
+      AFRAME.registerComponent('slow-spin', {
+        tick: function (time, timeDelta) {
+          const rotation = this.el.getAttribute('rotation');
+          rotation.y += timeDelta * 0.01; // slow rotation (degrees per ms)
+          this.el.setAttribute('rotation', rotation);
+        }
+      });
+
+      document.querySelector('#videoCube').setAttribute('slow-spin', '');
     </script>
   </body>
 </html>
